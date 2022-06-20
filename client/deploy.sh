@@ -13,11 +13,11 @@ cd dist
 # echo 'www.example.com' > CNAME
 
 git init
-# git checkout -b main
+git checkout -b main
 git add -A
 git commit -m 'deploy'
 
 # Add your GitHub repo details here
-git push -f git@github.com:jodies383/quotes-app main:gh-pages
+git push -f https://github.com/jodies383/quotes-app.git main:gh-pages
 
 cd -
