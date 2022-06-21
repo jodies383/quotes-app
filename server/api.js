@@ -1,105 +1,147 @@
 module.exports = function (app, db) {
 	const jwt = require('jsonwebtoken')
+	const bcrypt = require('bcrypt');
+	const saltRounds = 10;
+
+	function verifyToken(req, res, next) {
+		const token = req.headers.authorization && req.headers.authorization.split(" ")[1];
+		if (!req.headers.authorization || !token) {
+			res.sendStatus(401);
+			return;
+		}
+		try {
+			const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+			const { username } = decoded;
+
+			if (username) {
+				next();
+			} else {
+				res.status(403).json({
+					message: 'unauthorized'
+				});
+			}
+		} catch (err) {
+			if (err) {
+				res.json({
+					message: 'expired'
+				})
+			}
+			next()
+
+
+		}
+
+	}
 
 	app.post('/api/register', async function (req, res, next) {
-		try {
-			const { username } = req.body;
+		const { username } = req.body;
 		const { password } = req.body;
 		let loveCounter = 0
-		
-		const token = jwt.sign({
-			username
-		}, process.env.ACCESS_TOKEN_SECRET);
 
 		let checkDuplicate = await db.manyOrNone(`SELECT id from love_user WHERE username = $1`, [username]);
-
-		if (checkDuplicate.length < 1) {
-		await db.none(`insert into love_user (username, password, love_count) values ($1, $2, $3)`, [username, password, loveCounter])
-		}
-
-		res.json({
-			token,
-			data: await db.manyOrNone("select * from love_user")
+		bcrypt.genSalt(saltRounds, async function (err, salt) {
+			bcrypt.hash(password, salt, async function (err, hash) {
+				// Store hash in your password DB.
+				if (checkDuplicate.length < 1) {
+					await db.none(`insert into love_user (username, password, love_count) values ($1, $2, $3)`, [username, hash, loveCounter])
+					res.json({
+						message: 'success'
+					});
+				} else {
+					res.json({
+						message: 'duplicate'
+					});
+				}
+			});
 		});
-		} catch (error) {
-			console.log(error);
-		}
 
 	})
 	app.post('/api/login', async function (req, res, next) {
-		// try {
-		const { username } = req.body;
-		const { password } = req.body;
-		
-		let checkPassword = await db.oneOrNone(`SELECT password from love_user WHERE username = $1`, [username]);
-
-		if (checkPassword.password === password) {
-			
+		const  {username}  = req.body;
+		const  {password} = req.body;
+		const token = jwt.sign({
+			username
+		}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '4hr' });
+		let checkUser = await db.manyOrNone(`SELECT id from love_user WHERE username = $1`, [username]);
+		if (checkUser.length < 1) {
 			res.json({
-				message: 'success'
+				token,
+				message: 'unregistered'
 			});
-		}
-		// } catch (error) {
-		// 	console.log(error);
-		// }
+		} else {
 
-	})
+			let checkPassword = await db.oneOrNone(`SELECT password from love_user WHERE username = $1`, [username]);
+
+			const match = await bcrypt.compare(password, checkPassword.password);
+
+			if (match) {
+				res.json({
+					token,
+					message: 'success'
+				});
+			} else {
+				res.json({
+					token,
+					message: 'unmatched'
+				});
+			}
+		}
+	});
+
+
+
 	app.post('/api/hearts', async function (req, res, next) {
 		try {
 			const { username } = req.body;
-		
-		await db.none(`UPDATE love_user SET love_count = love_count + 1 WHERE username = $1`, [username])
 
-		// res.json({
-		// 	data: await db.manyOrNone("select * from love_user")
-		// });
+			await db.none(`UPDATE love_user SET love_count = love_count + 1 WHERE username = $1`, [username])
+
 		} catch (error) {
 			console.log(error);
 		}
 
 	})
-	app.get('/api/hearts/:username', async function (req, res, next) {
+
+	app.post('/api/hearts/decrease', async function (req, res, next) {
+		try {
+			const { username } = req.body;
+			let checkLoveCount = await db.oneOrNone(`SELECT love_count from love_user WHERE username = $1`, [username]);
+
+			if (checkLoveCount.love_count > 0) {
+				await db.none(`UPDATE love_user SET love_count = love_count - 1 WHERE username = $1`, [username])
+			}
+
+
+		} catch (error) {
+			console.log(error);
+		}
+
+	})
+
+	app.get('/api/hearts/:username', verifyToken, async function (req, res, next) {
 		try {
 			let hearts
 			const { username } = req.params;
-			let love_count = await db.one(`select love_count from love_user WHERE username = $1`, [username])
+
+			let love_count = await db.oneOrNone(`select love_count from love_user WHERE username = $1`, [username])
 			if (love_count.love_count <= 0) {
-				return "💔"
+				hearts = "💔"
+			} else if (love_count.love_count > 0 && love_count.love_count <= 5) {
+				hearts = "💚"
+			} else if (love_count.love_count <= 10) {
+				hearts = "💚💚";
+			} else {
+				hearts = "💚💚💚";
 			}
-	
-		  if (love_count.love_count > 0 && love_count.love_count <= 5) {
-			hearts = "💚"
-		  } else if (love_count.love_count <= 10) {
-			hearts = "💚💚";
-		  } else {
-			hearts = "💚💚💚";
-		  }
-		res.json({
-			data: hearts
-		});
+			res.json({
+				data: hearts
+			});
+
 		} catch (error) {
+
 			console.log(error);
 		}
 
 	})
-	// function verifyToken(req, res, next) {
 
-	// 	const token = req.headers.authorization && req.headers.authorization.split(" ")[1];
-	// 	if (!req.headers.authorization || !token) {
-	// 		res.sendStatus(401);
-	// 		return;
-	// 	}
-	// 	const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-
-	// 	const { username } = decoded;
-
-	// 	if (username && username === process.env.USERNAME) {
-	// 		next();
-	// 	} else {
-	// 		res.status(403).json({
-	// 			message: 'unauthorized'
-	// 		});
-	// 	}
-
-	// }
 }

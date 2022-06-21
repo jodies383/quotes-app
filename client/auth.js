@@ -1,5 +1,6 @@
 import axios from "axios";
 export function Authorization() {
+    const URL_BASE = import.meta.env.VITE_SERVER_URL;
     return {
         username: '',
         password: '',
@@ -14,7 +15,7 @@ export function Authorization() {
         successMessage: false,
 
 
-        onload() {
+        init() {
             if (localStorage.getItem('token') && localStorage.getItem('username')) {
                 this.registerInput = false
                 this.loginInput = false
@@ -23,13 +24,13 @@ export function Authorization() {
                 axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
                 const username = localStorage.getItem('username')
                 axios
-                    .get(`http://localhost:4000/api/hearts/${username}`, { withCredentials: true, })
+                    .get(`${URL_BASE}/api/hearts/${username}`, { withCredentials: true, })
                     .then((result) => {
                         this.heartsCount = result.data.data
                     });
                 setInterval(() => {
                     axios
-                        .post(`http://localhost:4000/api/hearts/decrease`, { username: username }, { withCredentials: true, })
+                        .post(`${URL_BASE}/api/hearts/decrease`, { username: username })
                         .then((result) => {
                             alert('decreased')
                         });
@@ -50,7 +51,7 @@ export function Authorization() {
         register() {
             if (this.username !== '') {
                 axios
-                    .post('http://localhost:4000/api/register', { username: this.username, password: this.password }, { withCredentials: true, })
+                    .post(`${URL_BASE}/api/register`, { username: this.username, password: this.password })
                     .then((result) => {
                         if (result.data.message == 'success') {
                             this.successMessage = true,
@@ -76,7 +77,7 @@ export function Authorization() {
         login() {
             axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
             axios
-                .post('http://localhost:4000/api/login', { username: this.loginUsername, password: this.loginPassword }, { withCredentials: true, })
+                .post(`${URL_BASE}/api/login`, { username: this.loginUsername, password: this.loginPassword })
                 .then((result) => {
                     if (result.data.message == 'unregistered') {
                         this.errorMessage = true,
@@ -102,7 +103,7 @@ export function Authorization() {
                             this.logoutBtn = true
 
                             axios
-                                .get(`http://localhost:4000/api/hearts/${this.loginUsername}`, { withCredentials: true, })
+                                .get(`${URL_BASE}/api/hearts/${this.loginUsername}`)
                                 .then((result) => {
                                     this.heartsCount = result.data.data
                                 });
@@ -120,7 +121,7 @@ export function Authorization() {
             const username = localStorage.getItem('username')
             axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
             axios
-                .post('http://localhost:4000/api/hearts', { username: username }, { withCredentials: true, })
+                .post(`${URL_BASE}/api/hearts`, { username: username })
                 .then((result) => {
                     this.heartsCount = result.data.data
                  });
@@ -130,7 +131,7 @@ export function Authorization() {
             axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
 
             axios
-                .get(`http://localhost:4000/api/hearts/${username}`, { withCredentials: true, })
+                .get(`${URL_BASE}/api/hearts/${username}`)
                 .then((result) => {
                     if (result.data.message == 'expired') {
                         this.errorMessage = true,

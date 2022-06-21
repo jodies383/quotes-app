@@ -13,7 +13,7 @@
 </head>
 
 <body x-data="loveCounter">
-  <div x-data="auth" x-init="onload()">
+  <div x-data="auth" x-init="init()">
     <p id="snackbar" class="error" x-ref="errorMessage" x-show="errorMessage"></p>
     <p id="snackbar" class="success" x-ref="successMessage" x-show="successMessage"></p>
     <div class="d-flex justify-content-end">
