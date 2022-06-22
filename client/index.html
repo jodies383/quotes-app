@@ -14,18 +14,23 @@
 
 <body x-data="loveCounter">
   <div x-data="auth" x-init="init()">
+    <nav class="navbar navbar-dark">
+      <div class="justify-content-center container-fluid" id="brand">
+          <h1 class="text-center title">Love Counter</h1>
+        </div>
+      </nav>
+      <div class="d-flex justify-content-end logout">
+        <button @click="logout()" class="btn btn-primary" x-show="logoutBtn">Logout</button>
+      </div>
     <p id="snackbar" class="error" x-ref="errorMessage" x-show="errorMessage"></p>
     <p id="snackbar" class="success" x-ref="successMessage" x-show="successMessage"></p>
-    <div class="d-flex justify-content-end">
-
-      <button @click="logout()" class="btn btn-primary" x-show="logoutBtn">Logout</button>
-    </div>
     <div class="h-100 d-flex align-items-center justify-content-center">
-
-      <div class="">
+      <div class="container">
         <div x-show="registerInput">
           <div class="h-100 d-flex align-items-center justify-content-center">
-
+            <h2>register now</h2>
+          </div>
+          <div class="d-flex justify-content-center">
             <input placeholder="username" type="text" x-model="username" class="username border border-green-400"
               name="username" id="">
             <br>
@@ -36,7 +41,7 @@
           </div>
         <br>
         <div x-show="loginInput">
-          <div class="">
+          <div class="d-flex justify-content-center">
             <h2>already registered? Login below</h2>
           </div>
           <div class="h-100 d-flex align-items-center justify-content-center">
@@ -53,6 +58,8 @@
       </div>
     </div>
     <div x-show="mainContent">
+      <div class="flex justify-center" x-text="user">
+      </div>
       <div class="heartsApp">
         <div class="h-100 d-flex align-items-center justify-content-center">
           <h1 class="flex justify-center">Show some heart</h1>
@@ -62,23 +69,23 @@
           </div>
         </div>
         <div class="h-100 d-flex align-items-center justify-content-center">
-          <button class="btn btn-primary" @click="increaseHearts()">Show ♥️</button>
+          <button class="btn loading btn-primary" @click="increaseHearts()">Show ♥️</button>
         </div>
       </div>
       <br>
-      <!-- <div x-data="quoteApp" class="quoteApp quote">
+      <div x-data="quoteApp" class="quoteApp quote">
         <h1 class="content font-sans text-lg text-gray-800 text-center">Quotes</h1>
         <div class="content font-sans text-lg text-gray-800 text-center">
           <button class="btn btn-primary" @click="getQuote()">Next
             quote 📢</button>
-        </div> -->
-      <!-- <div class="quote">
+        </div>
+      <div class="quote">
           <div x-text="quote.quote" class="content"></div>
           <div>
             <strong>by </strong><span x-text="quote.author"></span>
           </div>
-        </div> -->
-      <!-- </div> -->
+        </div>
+      </div>
     </div>
     <div class="footer fixed-bottom">
       <hr>
@@ -87,7 +94,6 @@
     <script defer src="https://unpkg.com/@alpinejs/persist@3.x.x/dist/cdn.min.js"></script>
 
     <script type="module" src="./main.js"></script>
-    <!-- <script src="/client/auth.js"></script> -->
   </div>
 
 </body>
