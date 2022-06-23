@@ -163,18 +163,20 @@ module.exports = function (app, db) {
 			const { username } = req.params;
 			
 			let love_count = await db.oneOrNone(`select love_count from love_user WHERE username = $1`, [username])
-			if (love_count.love_count <= 0) {
-				hearts = "💔"
-			} else if (love_count.love_count > 0 && love_count.love_count <= 5) {
-				hearts = "💚"
-			} else if (love_count.love_count <= 10) {
-				hearts = "💚💚";
-			} else {
-				hearts = "💚💚💚";
+			if (love_count){
+				if (love_count.love_count <= 0) {
+					hearts = "💔"
+				} else if (love_count.love_count > 0 && love_count.love_count <= 5) {
+					hearts = "💚"
+				} else if (love_count.love_count <= 10) {
+					hearts = "💚💚";
+				} else {
+					hearts = "💚💚💚";
+				}
+				res.json({
+					data: hearts
+				});
 			}
-			res.json({
-				data: hearts
-			});
 
 		} catch (error) {
 

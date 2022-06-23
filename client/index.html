@@ -13,95 +13,104 @@
 </head>
 
 <body x-data="loveCounter" x-init="init()">
-
-    <nav class="navbar navbar-dark">
-      <div class="justify-content-center container-fluid" id="brand">
-        <h1 class="text-center title">Love Counter</h1>
-      </div>
-    </nav>
-    <div class="d-flex justify-content-end logout">
-      <button @click="logout()" class="btn btn-primary" x-show="logoutBtn">Logout</button>
+  <nav class="navbar navbar-dark">
+    <div class="justify-content-center container-fluid" id="brand">
+      <h1 class="text-center title">Love Counter</h1>
     </div>
-    <p id="snackbar" class="error" x-ref="errorMessage" x-show="errorMessage"></p>
-    <p id="snackbar" class="success" x-ref="successMessage" x-show="successMessage"></p>
-    <div class="h-100 d-flex align-items-center justify-content-center">
-      <div class="container">
-        <div x-show="loginInput">
+  </nav>
+  <div class="d-flex justify-content-end logout">
+    <button @click="logout()" class="btn btn-primary" x-show="logoutBtn">Logout</button>
+  </div>
+  <p id="snackbar" class="error" x-ref="errorMessage" x-show="errorMessage"></p>
+  <p id="snackbar" class="success" x-ref="successMessage" x-show="successMessage"></p>
+  <div class="h-100 d-flex align-items-center justify-content-center">
+    <div class="container">
+      <div x-show="loginInput">
+        <div class="d-flex justify-content-center">
+          <h2>Login</h2>
+        </div>
+        <form class="row g-3 d-flex justify-content-center">
+          <div class="col-auto">
+            <label for="staticEmail2" class="visually-hidden">Username</label>
+            <input type="text" x-model="loginUsername" class="form-control" id="staticEmail2" placeholder="Username">
+          </div>
+          <div class="col-auto">
+            <label for="inputPassword2" class="visually-hidden">Password</label>
+            <input type="password" x-model="loginPassword" class="form-control" id="inputPassword2"
+              placeholder="Password">
+          </div>
+        </form>
+        <div class="col-auto">
+          <br>
           <div class="d-flex justify-content-center">
-            <h2>Login</h2>
+            <button @click="login()" x-bind:disabled="!loginUsername || !loginPassword" type="submit"
+              class="btn btn-primary mb-3">Login</button>
           </div>
-          <div class="h-100 d-flex align-items-center justify-content-center">
-            <input placeholder="username" type="text" x-model="loginUsername" class="username border border-green-400"
-              name="username" id="">
-            <br>
-            <input placeholder="password" type="password" x-model="loginPassword"
-              class="password border border-green-400" name="password" id="">
-            <button @click="login()" x-bind:disabled="!loginUsername || !loginPassword"
-              class="btn btn-primary">Login</button>
-
-          </div>
-          <div class="h-100 d-flex align-items-center justify-content-center">
-            <h2 @click="hideLogin()" class="link-primary">or register here</h2>
-          </div>
+          <h2 @click="hideLogin()" class="link-primary d-flex justify-content-center">or register here</h2>
         </div>
-        <div x-show="registerInput">
-          <div class="h-100 d-flex align-items-center justify-content-center">
-            <h3>Create a username and password</h3>
+      </div>
+      <div x-show="registerInput">
+        <div class="h-100 d-flex align-items-center justify-content-center">
+          <h3>Create a username and password</h3>
+        </div>
+        <form class="row g-3 d-flex justify-content-center">
+          <div class="col-auto">
+            <label for="staticEmail1" class="visually-hidden">Username</label>
+            <input type="text" x-model="username" class="form-control" id="staticEmail1" placeholder="Username">
           </div>
+          <div class="col-auto">
+            <label for="inputPassword1" class="visually-hidden">Password</label>
+            <input type="password" x-model="password" class="form-control" id="inputPassword1" placeholder="Password">
+          </div>
+        </form>
+        <div class="col-auto">
+          <br>
           <div class="d-flex justify-content-center">
-            <input placeholder="username" type="text" x-model="username" class="username border border-green-400"
-              name="username" id="">
-            <br>
-            <input placeholder="password" type="password" x-model="password" class="password border border-green-400"
-              name="password" id="">
-            <button @click="register()" x-bind:disabled="!username || !password"
-              class="btn btn-primary">Register</button>
+            <button @click="register()" x-bind:disabled="!username || !password" type="submit"
+              class="btn btn-primary mb-3">Register</button>
           </div>
-          <div class="h-100 d-flex align-items-center justify-content-center">
-            <h2 @click="hideRegister()" class="link-primary">or login here</h2>
-          </div>
+          <h2 @click="hideRegister()" class="link-primary d-flex justify-content-center">or login here</h2>
         </div>
       </div>
     </div>
-    <div x-show="mainContent">
-      <div class="flex justify-center">
+  </div>
+  <div x-show="mainContent">
+    <div class="flex justify-center">
+    </div>
+    <div class="heartsApp">
+      <div class="h-100 d-flex align-items-center justify-content-center">
+        <h1 class="flex justify-center">Show some heart</h1>
       </div>
-      <div class="heartsApp">
-        <div class="h-100 d-flex align-items-center justify-content-center">
-          <h1 class="flex justify-center">Show some heart</h1>
-        </div>
-        <div class="h-100 d-flex align-items-center justify-content-center">
-          <div class="flex justify-center" x-text="heartsCount" x-init="displayHearts()">
-          </div>
-        </div>
-        <div class="h-100 d-flex align-items-center justify-content-center">
-          <button class="btn loading btn-primary" @click="increaseHearts()">Show ♥️</button>
+      <div class="h-100 d-flex align-items-center justify-content-center">
+        <div class="flex justify-center" x-text="heartsCount" x-init="displayHearts()">
         </div>
       </div>
-      <br>
-      <div x-data="quoteApp" class="quoteApp quote">
-        <h1 class="content font-sans text-lg text-gray-800 text-center">Quotes</h1>
-        <div class="content font-sans text-lg text-gray-800 text-center">
-          <button class="btn btn-primary" @click="getQuote()">Next
-            quote 📢</button>
-        </div>
-        <div class="quote">
-          <div x-text="quote.quote" class="content"></div>
-          <div>
-            <strong>by </strong><span x-text="quote.author"></span>
-          </div>
+      <div class="h-100 d-flex align-items-center justify-content-center">
+        <button class="btn loading btn-primary" @click="increaseHearts()">Show ♥️</button>
+      </div>
+    </div>
+    <br>
+    <div x-data="quoteApp" class="quoteApp quote">
+      <h1 class="content font-sans text-lg text-gray-800 text-center">Quotes</h1>
+      <div class="content font-sans text-lg text-gray-800 text-center">
+        <button class="btn btn-primary" @click="getQuote()">Next
+          quote 📢</button>
+      </div>
+      <div class="quote">
+        <div x-text="quote.quote" class="content"></div>
+        <div>
+          <strong>by </strong><span x-text="quote.author"></span>
         </div>
       </div>
     </div>
-    <div class="footer fixed-bottom">
-      <hr>
-      <div id="app"></div>
-    </div>
-    <script defer src="https://unpkg.com/@alpinejs/persist@3.x.x/dist/cdn.min.js"></script>
+  </div>
+  <div class="footer fixed-bottom">
+    <hr>
+    <div id="app"></div>
+  </div>
+  <script defer src="https://unpkg.com/@alpinejs/persist@3.x.x/dist/cdn.min.js"></script>
 
-    <script type="module" src="./main.js"></script>
-
-
+  <script type="module" src="./main.js"></script>
 </body>
 
 </html>
