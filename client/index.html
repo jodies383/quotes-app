@@ -12,37 +12,23 @@
   <title>Love Counter</title>
 </head>
 
-<body x-data="loveCounter">
-  <div x-data="auth" x-init="init()">
+<body x-data="loveCounter" x-init="init()">
+
     <nav class="navbar navbar-dark">
       <div class="justify-content-center container-fluid" id="brand">
-          <h1 class="text-center title">Love Counter</h1>
-        </div>
-      </nav>
-      <div class="d-flex justify-content-end logout">
-        <button @click="logout()" class="btn btn-primary" x-show="logoutBtn">Logout</button>
+        <h1 class="text-center title">Love Counter</h1>
       </div>
+    </nav>
+    <div class="d-flex justify-content-end logout">
+      <button @click="logout()" class="btn btn-primary" x-show="logoutBtn">Logout</button>
+    </div>
     <p id="snackbar" class="error" x-ref="errorMessage" x-show="errorMessage"></p>
     <p id="snackbar" class="success" x-ref="successMessage" x-show="successMessage"></p>
     <div class="h-100 d-flex align-items-center justify-content-center">
       <div class="container">
-        <div x-show="registerInput">
-          <div class="h-100 d-flex align-items-center justify-content-center">
-            <h2>register now</h2>
-          </div>
-          <div class="d-flex justify-content-center">
-            <input placeholder="username" type="text" x-model="username" class="username border border-green-400"
-              name="username" id="">
-            <br>
-            <input placeholder="password" type="password" x-model="password" class="password border border-green-400"
-              name="password" id="">
-            <button @click="register()" x-bind:disabled="!username || !password" class="btn btn-primary">Register</button>
-          </div>
-          </div>
-        <br>
         <div x-show="loginInput">
           <div class="d-flex justify-content-center">
-            <h2>already registered? Login below</h2>
+            <h2>Login</h2>
           </div>
           <div class="h-100 d-flex align-items-center justify-content-center">
             <input placeholder="username" type="text" x-model="loginUsername" class="username border border-green-400"
@@ -54,11 +40,31 @@
               class="btn btn-primary">Login</button>
 
           </div>
+          <div class="h-100 d-flex align-items-center justify-content-center">
+            <h2 @click="hideLogin()" class="link-primary">or register here</h2>
+          </div>
+        </div>
+        <div x-show="registerInput">
+          <div class="h-100 d-flex align-items-center justify-content-center">
+            <h3>Create a username and password</h3>
+          </div>
+          <div class="d-flex justify-content-center">
+            <input placeholder="username" type="text" x-model="username" class="username border border-green-400"
+              name="username" id="">
+            <br>
+            <input placeholder="password" type="password" x-model="password" class="password border border-green-400"
+              name="password" id="">
+            <button @click="register()" x-bind:disabled="!username || !password"
+              class="btn btn-primary">Register</button>
+          </div>
+          <div class="h-100 d-flex align-items-center justify-content-center">
+            <h2 @click="hideRegister()" class="link-primary">or login here</h2>
+          </div>
         </div>
       </div>
     </div>
     <div x-show="mainContent">
-      <div class="flex justify-center" x-text="user">
+      <div class="flex justify-center">
       </div>
       <div class="heartsApp">
         <div class="h-100 d-flex align-items-center justify-content-center">
@@ -79,7 +85,7 @@
           <button class="btn btn-primary" @click="getQuote()">Next
             quote 📢</button>
         </div>
-      <div class="quote">
+        <div class="quote">
           <div x-text="quote.quote" class="content"></div>
           <div>
             <strong>by </strong><span x-text="quote.author"></span>
@@ -94,7 +100,7 @@
     <script defer src="https://unpkg.com/@alpinejs/persist@3.x.x/dist/cdn.min.js"></script>
 
     <script type="module" src="./main.js"></script>
-  </div>
+
 
 </body>
 

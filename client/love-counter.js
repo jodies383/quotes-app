@@ -10,7 +10,7 @@ export function LoveCounter() {
     loginPassword: '',
     loginInput: true,
     logoutBtn: false,
-    registerInput: true,
+    registerInput: false,
     mainContent: false,
     errorMessage: false,
     successMessage: false,
@@ -41,13 +41,20 @@ export function LoveCounter() {
     logout() {
       localStorage.clear()
       this.logoutBtn = false
-      this.registerInput = true
+      this.registerInput = false
       this.loginInput = true
       this.mainContent = false
       this.loginUsername = ''
       this.loginPassword = ''
     },
-
+    hideLogin() {
+      this.loginInput = false
+      this.registerInput = true
+    },
+    hideRegister(){
+      this.loginInput = true
+      this.registerInput = false
+    },
     register() {
       if (this.username !== '') {
         axios
@@ -56,9 +63,9 @@ export function LoveCounter() {
             if (result.data.message == 'success') {
               this.successMessage = true,
                 this.$refs.successMessage.innerText = 'registration successful'
+                this.loginInput = true
+                this.registerInput = false
 
-              this.successMessage = true,
-                this.$refs.successMessage.innerText = 'registration successful'
             } else {
               this.errorMessage = true,
                 this.$refs.errorMessage.innerText = 'this username has already been registered'

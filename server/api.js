@@ -21,7 +21,7 @@ module.exports = function (app, db) {
 				});
 			}
 		} catch (err) {
-			if (err) {
+			if (err && 500) {
 				res.json({
 					message: 'expired'
 				})
@@ -31,6 +31,28 @@ module.exports = function (app, db) {
 
 		}
 
+	}
+
+	/**
+	 * 
+	 * @param {*} username - username from logged in user
+	 * @return {Object} - user data
+	 */
+	async function getUserByUsername(username) {
+		return await db.oneOrNone(`SELECT * from love_user WHERE username = $1`, [username]);
+	}
+
+	function getHearts(love_count) {
+		if (love_count <= 0) {
+			hearts = "💔"
+		} else if (love_count > 0 && love_count <= 5) {
+			hearts = "💚"
+		} else if (love_count <= 10) {
+			hearts = "💚💚";
+		} else {
+			hearts = "💚💚💚";
+		}
+		return hearts
 	}
 
 	app.post('/api/register', async function (req, res, next) {
@@ -57,8 +79,8 @@ module.exports = function (app, db) {
 
 	})
 	app.post('/api/login', async function (req, res, next) {
-		const  {username}  = req.body;
-		const  {password} = req.body;
+		const { username } = req.body;
+		const { password } = req.body;
 		const token = jwt.sign({
 			username
 		}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '4hr' });
@@ -95,9 +117,17 @@ module.exports = function (app, db) {
 			const { username } = req.body;
 
 			await db.none(`UPDATE love_user SET love_count = love_count + 1 WHERE username = $1`, [username])
+			const user = await getUserByUsername(username)
 
+			const hearts = getHearts(user.love_count)
+
+			res.json({
+				data: hearts
+			});
 		} catch (error) {
 			console.log(error);
+			res.status(500)
+				.json(error)
 		}
 
 	})
@@ -107,10 +137,18 @@ module.exports = function (app, db) {
 			const { username } = req.body;
 			let checkLoveCount = await db.oneOrNone(`SELECT love_count from love_user WHERE username = $1`, [username]);
 
-			if (checkLoveCount.love_count > 0) {
-				await db.none(`UPDATE love_user SET love_count = love_count - 1 WHERE username = $1`, [username])
-			}
 
+				if (checkLoveCount.love_count > 0) {
+					await db.none(`UPDATE love_user SET love_count = love_count - 1 WHERE username = $1`, [username])
+				} 
+		
+			const user = await getUserByUsername(username)
+			console.log(user, `user`);
+			const hearts = getHearts(user.love_count)
+			
+			res.json({
+				data: hearts
+			});
 
 		} catch (error) {
 			console.log(error);
@@ -118,11 +156,12 @@ module.exports = function (app, db) {
 
 	})
 
+
 	app.get('/api/hearts/:username', verifyToken, async function (req, res, next) {
 		try {
 			let hearts
 			const { username } = req.params;
-
+			
 			let love_count = await db.oneOrNone(`select love_count from love_user WHERE username = $1`, [username])
 			if (love_count.love_count <= 0) {
 				hearts = "💔"

@@ -33,6 +33,10 @@ nav {
   margin-top: 1%;
 }
 
+.link-primary:hover {
+  cursor: pointer;
+}
+
 .heartsApp {
   background-color: #47b2d6;
   border-radius: 0.5em;
