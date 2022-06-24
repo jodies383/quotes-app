@@ -23,18 +23,14 @@ export function LoveCounter() {
         this.logoutBtn = true
         axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
         const username = localStorage.getItem('username')
+       
         axios
           .get(`${URL_BASE}/api/hearts/${username}`, { withCredentials: true, })
           .then((result) => {
             this.heartsCount = result.data.data
           });
-        setInterval(() => {
-          axios
-            .post(`${URL_BASE}/api/hearts/decrease`, { username: username })
-            .then((result) => {
-              this.heartsCount = result.data.data
-            });
-        }, 10000)
+
+
 
       }
     },
@@ -150,6 +146,19 @@ export function LoveCounter() {
           }
           else {
             this.heartsCount = result.data.data
+            setInterval(() => {
+              if (localStorage.getItem('token') && localStorage.getItem('username') !== ''){
+                const user = localStorage.getItem('username')
+
+                console.log('setInterval')
+              axios
+                .post(`${URL_BASE}/api/hearts/decrease`, { username: user })
+                .then((result) => {
+                  this.heartsCount = result.data.data
+                  console.log('decrease')
+                  });
+                }
+              }, 5000)
           }
         });
       setTimeout(() => { this.errorMessage = false }, 2000);

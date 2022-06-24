@@ -137,13 +137,14 @@ module.exports = function (app, db) {
 			const { username } = req.body;
 			let checkLoveCount = await db.oneOrNone(`SELECT love_count from love_user WHERE username = $1`, [username]);
 
-
-				if (checkLoveCount.love_count > 0) {
+				if (checkLoveCount.love_count > 0 && username) {
 					await db.none(`UPDATE love_user SET love_count = love_count - 1 WHERE username = $1`, [username])
-				} 
+				} else {
+					null
+				}
 		
 			const user = await getUserByUsername(username)
-			console.log(user, `user`);
+			// console.log(user, `user`);
 			const hearts = getHearts(user.love_count)
 			
 			res.json({
