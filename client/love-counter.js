@@ -75,6 +75,8 @@ export function LoveCounter() {
 
       this.username = ''
       this.password = ''
+      this.loginUsername = ''
+      this.loginPassword = ''
     },
     login() {
       this.user = localStorage.getItem('username')
