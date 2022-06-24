@@ -137,7 +137,7 @@ module.exports = function (app, db) {
 			const { username } = req.body;
 			let checkLoveCount = await db.oneOrNone(`SELECT love_count from love_user WHERE username = $1`, [username]);
 
-				if (checkLoveCount.love_count > 0 && username) {
+				if (checkLoveCount.love_count > 0) {
 					await db.none(`UPDATE love_user SET love_count = love_count - 1 WHERE username = $1`, [username])
 				} else {
 					null

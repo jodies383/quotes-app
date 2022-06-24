@@ -23,19 +23,18 @@ export function LoveCounter() {
         this.logoutBtn = true
         axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
         const username = localStorage.getItem('username')
-       
         axios
           .get(`${URL_BASE}/api/hearts/${username}`, { withCredentials: true, })
           .then((result) => {
             this.heartsCount = result.data.data
           });
-
-
+        
 
       }
     },
     logout() {
       localStorage.clear()
+      location.reload()
       this.logoutBtn = false
       this.registerInput = false
       this.loginInput = true
@@ -47,7 +46,7 @@ export function LoveCounter() {
       this.loginInput = false
       this.registerInput = true
     },
-    hideRegister(){
+    hideRegister() {
       this.loginInput = true
       this.registerInput = false
     },
@@ -59,8 +58,8 @@ export function LoveCounter() {
             if (result.data.message == 'success') {
               this.successMessage = true,
                 this.$refs.successMessage.innerText = 'registration successful'
-                this.loginInput = true
-                this.registerInput = false
+              this.loginInput = true
+              this.registerInput = false
 
             } else {
               this.errorMessage = true,
@@ -105,6 +104,7 @@ export function LoveCounter() {
               this.registerInput = false
               this.loginInput = false
               this.logoutBtn = true
+              location.reload()
 
               axios
                 .get(`${URL_BASE}/api/hearts/${this.loginUsername}`)
@@ -116,7 +116,8 @@ export function LoveCounter() {
             }
           }
 
-        });
+        });        
+
       setTimeout(() => { this.errorMessage = false }, 2000);
       setTimeout(() => { this.successMessage = false }, 2000);
     }
@@ -146,21 +147,18 @@ export function LoveCounter() {
           }
           else {
             this.heartsCount = result.data.data
-            setInterval(() => {
-              if (localStorage.getItem('token') && localStorage.getItem('username') !== ''){
-                const user = localStorage.getItem('username')
-
-                console.log('setInterval')
-              axios
-                .post(`${URL_BASE}/api/hearts/decrease`, { username: user })
-                .then((result) => {
-                  this.heartsCount = result.data.data
-                  console.log('decrease')
-                  });
-                }
-              }, 5000)
           }
         });
+        if (localStorage.getItem('token') !== ''){
+
+          setInterval(() => {
+            axios
+              .post(`${URL_BASE}/api/hearts/decrease`, { username: username })
+              .then((result) => {
+                this.heartsCount = result.data.data
+              });
+          }, 5000)
+        }
       setTimeout(() => { this.errorMessage = false }, 2000);
     }
   }
